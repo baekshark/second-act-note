@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#3b5b4a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="인생 2막 노트" />
+  <title>인생 2막 노트</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --surface: #ffffff;
+      --surface-soft: #efece4;
+      --ink: #1e2421;
+      --muted: #646e68;
+      --accent: #3b5b4a;
+      --accent-ink: #ffffff;
+      --accent-soft: #e4ede8;
+      --warm: #b86b35;
+      --warm-soft: #faece2;
+      --done: #2d6a4f;
+      --done-soft: #dff2e8;
+      --border: #e3dfd5;
+      --shadow: 0 4px 16px rgba(30, 36, 33, 0.06);
+      --radius: 18px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      padding-bottom: calc(96px + var(--safe-bottom));
+      min-height: 100dvh;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(246, 244, 239, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px 12px;
+    }
+
+    .header-top {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      min-width: 44px;
+      height: 44px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.97);
+      background: var(--surface-soft);
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 14px 18px 0;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .filter-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 14px 0 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .card-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .card-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .category-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      color: var(--ink);
+    }
+
+    .card-tools {
+      display: flex;
+      gap: 4px;
+    }
+
+    .mini-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 15px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .mini-btn:active {
+      background: var(--surface-soft);
+      color: var(--ink);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .card-note {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      white-space: pre-line;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 6px;
+      border-top: 1px dashed var(--border);
+      gap: 8px;
+    }
+
+    .status-btn {
+      min-height: 42px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-idea {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .status-prep {
+      background: var(--warm-soft);
+      color: var(--warm);
+    }
+
+    .status-done {
+      background: var(--done-soft);
+      color: var(--done);
+    }
+
+    .card-date {
+      font-size: 12px;
+      color: #8b948e;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+    }
+
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: calc(20px + var(--safe-bottom));
+      z-index: 30;
+      height: 56px;
+      padding: 0 22px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(59, 91, 74, 0.32);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .fab:active {
+      transform: scale(0.96);
+    }
+
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: rgba(20, 25, 22, 0.45);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .backdrop.open {
+      display: flex;
+    }
+
+    .sheet {
+      width: 100%;
+      max-width: 640px;
+      max-height: 88dvh;
+      overflow-y: auto;
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      padding: 12px 20px calc(24px + var(--safe-bottom));
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.14);
+    }
+
+    @media (min-width: 640px) {
+      .backdrop {
+        align-items: center;
+        padding: 20px;
+      }
+      .sheet {
+        border-radius: 24px;
+      }
+    }
+
+    .sheet-handle {
+      width: 42px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--border);
+      margin: 0 auto 14px;
+    }
+
+    .sheet-title {
+      margin: 0 0 14px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .field textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn-secondary,
+    .btn-primary {
+      flex: 1;
+      min-height: 48px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface-soft);
+      color: var(--ink);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .info-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .info-box strong {
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon">🧭</div>
+        <div>
+          <h1 class="brand-title">인생 2막 노트</h1>
+          <p class="brand-sub">여유로운 다음 챕터를 위한 나만의 메모 보드</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" type="button" onclick="openBackupModal()" title="백업 및 복원">⇄ 백업</button>
+        <button class="icon-btn" type="button" onclick="openGuideModal()" title="설치 안내">ⓘ 안내</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="filter-row" id="filterRow"></div>
+    <div class="stats-bar">
+      <span id="statsText">전체 0개</span>
+      <span id="filterLabel">모든 항목</span>
+    </div>
+    <div class="card-list" id="cardList"></div>
+  </main>
+
+  <button class="fab" type="button" onclick="openEditor()">＋ 새 메모</button>
+
+  <!-- 메모 작성 / 수정 바텀 시트 -->
+  <div class="backdrop" id="editorBackdrop" onclick="handleBackdropClick(event, 'editorBackdrop')">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2 class="sheet-title" id="editorTitle">새 메모 남기기</h2>
+      <form id="memoForm" onsubmit="saveMemo(event)">
+        <input type="hidden" id="memoId" />
+        <div class="field">
+          <label for="memoCategory">구분</label>
+          <select id="memoCategory">
+            <option value="산티아고 순례길">산티아고 순례길</option>
+            <option value="여유와 일탈">여유와 일탈</option>
+            <option value="취미·일상">취미·일상</option>
+            <option value="아이디어 서랍">아이디어 서랍</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="memoTitle">제목</label>
+          <input id="memoTitle" type="text" placeholder="예: 산티아고 한 달 코스 계절 구상" required />
+        </div>
+        <div class="field">
+          <label for="memoNote">메모</label>
+          <textarea id="memoNote" placeholder="떠오르는 생각이나 준비 메모를 편하게 적어두세요."></textarea>
+        </div>
+        <div class="field">
+          <label for="memoStatus">현재 단계</label>
+          <select id="memoStatus">
+            <option value="idea">💡 아이디어 스케치</option>
+            <option value="prep">🎒 슬슬 준비 중</option>
+            <option value="done">✨ 실행 완료</option>
+          </select>
+        </div>
+        <div class="sheet-actions">
+          <button class="btn-secondary" type="button" onclick="closeModal('editorBackdrop')">취소</button>
+          <button class="btn-primary" type="submit">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 백업 및 복원 모달 -->
+  <div class="backdrop" id="backupBackdrop" onclick="handleBackdropClick(event, 'backupBackdrop')">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2 class="sheet-title">메모 백업 및 옮기기</h2>
+      <div class="info-box">
+        <strong>파일로 저장(.txt)</strong>을 누르면 기기 다운로드 폴더에 백업 파일이 저장됩니다. 다른 기기에서 복원할 때는 저장된 파일 내용을 열어 아래 칸에 붙여넣고 <strong>불러오기</strong>를 누르세요.
+      </div>
+      <div class="field">
+        <label for="backupText">백업 데이터 (JSON)</label>
+        <textarea id="backupText" placeholder="여기에 백업 데이터를 붙여넣어 복원할 수 있습니다."></textarea>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-primary" type="button" onclick="downloadBackupFile()">파일로 저장(.txt)</button>
+        <button class="btn-secondary" type="button" onclick="copyBackup()">글자 복사</button>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-secondary" type="button" onclick="restoreBackup()">불러오기</button>
+        <button class="btn-secondary" type="button" onclick="closeModal('backupBackdrop')">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사용 안내 모달 -->
+  <div class="backdrop" id="guideBackdrop" onclick="handleBackdropClick(event, 'guideBackdrop')">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2 class="sheet-title">모바일·태블릿 활용 팁</h2>
+      <div class="info-box">
+        <p style="margin-top:0;"><strong>1. 자동 저장:</strong> 작성한 메모는 이 기기 안에 자동으로 저장됩니다.</p>
+        <p><strong>2. 아이폰/아이패드:</strong> '파일' 앱에서 열거나 '단축어' 앱으로 <code>index.html</code>을 열면 앱처럼 쓰기 좋습니다.</p>
+        <p style="margin-bottom:0;"><strong>3. 갤럭시/안드로이드:</strong> 파일 앱이나 브라우저에서 열고 홈 화면에 추가해 보세요.</p>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-primary" type="button" onclick="closeModal('guideBackdrop')">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'second_act_notes_v1';
+    const CATEGORIES = ['전체', '산티아고 순례길', '여유와 일탈', '취미·일상', '아이디어 서랍'];
+    const STATUS_ORDER = ['idea', 'prep', 'done'];
+    const STATUS_META = {
+      idea: { label: '💡 아이디어 스케치', cls: 'status-idea' },
+      prep: { label: '🎒 슬슬 준비 중', cls: 'status-prep' },
+      done: { label: '✨ 실행 완료', cls: 'status-done' }
+    };
+
+    const INITIAL_NOTES = [
+      {
+        id: 'seed-1',
+        category: '산티아고 순례길',
+        title: '산티아고 순례길 한 달 코스',
+        note: '일정이 여유로워지면 나만의 속도로 한 달간 걸어보기. 출발 계절과 배낭 무게부터 천천히 구상.',
+        status: 'idea',
+        updatedAt: '오늘'
+      },
+      {
+        id: 'seed-2',
+        category: '여유와 일탈',
+        title: '업무 관계 스트레스에서 벗어나기',
+        note: '함께 일하며 부딪히던 긴장을 내려놓고 하루의 호흡을 내 뜻대로 가져가기.',
+        status: 'idea',
+        updatedAt: '오늘'
+      },
+      {
+        id: 'seed-3',
+        category: '취미·일상',
+        title: '바로크식 리코더 & 가벼운 산책 루틴',
+        note: '조급함 없이 좋아하는 곡 한 소절씩 이어가고 걷기 리듬 유지하기.',
+        status: 'prep',
+        updatedAt: '오늘'
+      }
+    ];
+
+    let activeCategory = '전체';
+    let notes = loadNotes();
+
+    function loadNotes() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [...INITIAL_NOTES];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [...INITIAL_NOTES];
+      } catch {
+        return [...INITIAL_NOTES];
+      }
+    }
+
+    function persistNotes() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      } catch (err) {
+        alert('저장 공간 접근에 실패했습니다.');
+      }
+    }
+
+    function todayLabel() {
+      const d = new Date();
+      return `${d.getMonth() + 1}/${d.getDate()}`;
+    }
+
+    function fileDateStamp() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}${mm}${dd}`;
+    }
+
+    function escapeHtml(str = '') {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderFilters() {
+      const row = document.getElementById('filterRow');
+      row.innerHTML = CATEGORIES.map((cat) => {
+        const active = cat === activeCategory ? 'active' : '';
+        return `<button class="chip ${active}" type="button" onclick="selectCategory('${escapeHtml(cat)}')">${escapeHtml(cat)}</button>`;
+      }).join('');
+    }
+
+    function selectCategory(cat) {
+      activeCategory = cat;
+      render();
+    }
+
+    function render() {
+      renderFilters();
+
+      const filtered = activeCategory === '전체'
+        ? notes
+        : notes.filter((item) => item.category === activeCategory);
+
+      document.getElementById('statsText').textContent = `총 ${notes.length}개 · 표시 ${filtered.length}개`;
+      document.getElementById('filterLabel').textContent = activeCategory;
+
+      const listEl = document.getElementById('cardList');
+      if (!filtered.length) {
+        listEl.innerHTML = `<div class="empty">아직 등록된 메모가 없어요.<br />오른쪽 아래 <strong>＋ 새 메모</strong> 버튼으로 가볍게 적어보세요.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map((item) => {
+        const st = STATUS_META[item.status] || STATUS_META.idea;
+        return `
+          <article class="card">
+            <div class="card-top">
+              <span class="category-badge">${escapeHtml(item.category)}</span>
+              <div class="card-tools">
+                <button class="mini-btn" type="button" onclick="openEditor('${escapeHtml(item.id)}')" aria-label="수정">✎</button>
+                <button class="mini-btn" type="button" onclick="deleteMemo('${escapeHtml(item.id)}')" aria-label="삭제">🗑</button>
+              </div>
+            </div>
+            <h2 class="card-title">${escapeHtml(item.title)}</h2>
+            <p class="card-note">${escapeHtml(item.note)}</p>
+            <div class="card-footer">
+              <button class="status-btn ${st.cls}" type="button" onclick="cycleStatus('${escapeHtml(item.id)}')">${st.label}</button>
+              <span class="card-date">${escapeHtml(item.updatedAt || todayLabel())}</span>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function openEditor(id = null) {
+      const form = document.getElementById('memoForm');
+      form.reset();
+      if (id) {
+        const found = notes.find((n) => n.id === id);
+        if (!found) return;
+        document.getElementById('editorTitle').textContent = '메모 수정';
+        document.getElementById('memoId').value = found.id;
+        document.getElementById('memoCategory').value = found.category;
+        document.getElementById('memoTitle').value = found.title;
+        document.getElementById('memoNote').value = found.note;
+        document.getElementById('memoStatus').value = found.status;
+      } else {
+        document.getElementById('editorTitle').textContent = '새 메모 남기기';
+        document.getElementById('memoId').value = '';
+        if (activeCategory !== '전체') {
+          document.getElementById('memoCategory').value = activeCategory;
+        }
+      }
+      document.getElementById('editorBackdrop').classList.add('open');
+    }
+
+    function saveMemo(e) {
+      e.preventDefault();
+      const id = document.getElementById('memoId').value;
+      const category = document.getElementById('memoCategory').value;
+      const title = document.getElementById('memoTitle').value.trim();
+      const note = document.getElementById('memoNote').value.trim();
+      const status = document.getElementById('memoStatus').value;
+      if (!title) return;
+
+      if (id) {
+        notes = notes.map((item) => item.id === id
+          ? { ...item, category, title, note, status, updatedAt: todayLabel() }
+          : item);
+      } else {
+        notes.unshift({
+          id: 'note-' + Date.now(),
+          category,
+          title,
+          note,
+          status,
+          updatedAt: todayLabel()
+        });
+      }
+
+      persistNotes();
+      closeModal('editorBackdrop');
+      render();
+    }
+
+    function cycleStatus(id) {
+      notes = notes.map((item) => {
+        if (item.id !== id) return item;
+        const idx = STATUS_ORDER.indexOf(item.status);
+        const nextStatus = STATUS_ORDER[(idx + 1) % STATUS_ORDER.length];
+        return { ...item, status: nextStatus, updatedAt: todayLabel() };
+      });
+      persistNotes();
+      render();
+    }
+
+    function deleteMemo(id) {
+      if (!confirm('이 메모를 삭제할까요?')) return;
+      notes = notes.filter((item) => item.id !== id);
+      persistNotes();
+      render();
+    }
+
+    function openBackupModal() {
+      document.getElementById('backupText').value = JSON.stringify(notes, null, 2);
+      document.getElementById('backupBackdrop').classList.add('open');
+    }
+
+    function downloadBackupFile() {
+      const content = JSON.stringify(notes, null, 2);
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `인생2막_노트_백업_${fileDateStamp()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function copyBackup() {
+      const area = document.getElementById('backupText');
+      area.select();
+      document.execCommand('copy');
+      alert('백업 데이터가 복사되었습니다.');
+    }
+
+    function restoreBackup() {
+      try {
+        const parsed = JSON.parse(document.getElementById('backupText').value);
+        if (!Array.isArray(parsed)) throw new Error('형식 오류');
+        notes = parsed;
+        persistNotes();
+        closeModal('backupBackdrop');
+        render();
+        alert('메모를 불러왔습니다.');
+      } catch {
+        alert('올바른 백업 형식(JSON 배열)인지 확인해 주세요.');
+      }
+    }
+
+    function openGuideModal() {
+      document.getElementById('guideBackdrop').classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function handleBackdropClick(e, id) {
+      if (e.target.id === id) {
+        closeModal(id);
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
